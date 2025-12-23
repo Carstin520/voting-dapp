@@ -44,7 +44,7 @@ export async function POST(request: Request) {
         return Response.json({error:"Invalid candidate"}, {status: 400, headers: ACTIONS_CORS_HEADERS});
     }
 
-    const connection = new Connection("http://127.0.0.1:8899", "confirmed");
+    const connection = new Connection("http://127.0.0.1:8899", "confirmed"); // commitment status
     //const program: Program<Voting>= new Program(IDL, {connection});
     const body: ActionPostRequest = await request.json();
     let voter;
@@ -78,6 +78,9 @@ export async function POST(request: Request) {
 
     const instruction = await program.methods
         .vote(candidate, pollId)
+        .accounts({
+            signer: voter
+        })
         .instruction();
     
     transaction.add(instruction);
